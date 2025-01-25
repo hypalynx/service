@@ -1,0 +1,39 @@
+# Main domain configurations
+example.com, localhost {
+    @localhost {
+        remote_ip 127.0.0.1
+        remote_ip ::1
+    }
+    reverse_proxy app_blue:8080 app_green:8080
+}
+
+# Grafana
+grafana.example.com, grafana.localhost {
+    @localhost {
+        remote_ip 127.0.0.1
+        remote_ip ::1
+    }
+    reverse_proxy grafana:3000
+}
+
+# Prometheus with Basic Auth (except for localhost)
+prometheus.example.com, prometheus.localhost {
+    @notlocal {
+        not remote_ip 127.0.0.1 ::1
+    }
+    basicauth @notlocal {
+        prometheus $2a$14$your_hashed_password_here
+    }
+    reverse_proxy prometheus:9090
+}
+
+# Loki (if needed)
+loki.example.com, loki.localhost {
+    @notlocal {
+        not remote_ip 127.0.0.1 ::1
+    }
+    basicauth @notlocal {
+        loki $2a$14$your_hashed_password_here
+    }
+    reverse_proxy loki:3100
+}

@@ -1,0 +1,26 @@
+# Template file, replace your-repo/your-app with actual app.
+name: Deploy
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Build and push Docker image
+        run: |
+          docker build -t your-repo/your-app .
+          docker push your-repo/your-app
+          
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /path/to/your/app
+            ./deploy.sh
